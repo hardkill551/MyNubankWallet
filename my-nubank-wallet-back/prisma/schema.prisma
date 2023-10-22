@@ -10,8 +10,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Session {
+model Sessions {
   id Int @id @default(autoincrement())
-  token String
-  listCardsUrl String
+  cpf String @unique
+  accessToken String
+  list_cards String
+  bills_summary_list String
+  common_xp String
+  features_map String
+  bills_summary String
+  foundation_tokens String
+  customer String
+  account String
+  app_flows String
+  customer_sessions String
+  userinfo String
+  events String
+  events_page String
+
+  @@map("sessions")
+
 }
