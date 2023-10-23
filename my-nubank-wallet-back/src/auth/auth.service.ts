@@ -4,6 +4,7 @@ import { NubankApi } from 'nubank-api';
 import { AuthRepository } from './auth.repository';
 import { AuthState } from 'nubank-api/lib/http';
 import { Sessions } from '@prisma/client';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -23,12 +24,12 @@ export class AuthService {
     'events',
     'events_page',
   ];
-  constructor(private readonly authRepository: AuthRepository) {}
+  constructor(private readonly authRepository: AuthRepository, private readonly jwtService: JwtService) {}
 
-  async login(signInUser: SignInUserDto) {
+   async login(signInUser: SignInUserDto) {
     const api = new NubankApi();
     try {
-      const auth = await api.auth.authenticateWithQrCode(
+      await api.auth.authenticateWithQrCode(
         signInUser.cpf,
         signInUser.password,
         signInUser.authCode,
@@ -58,5 +59,19 @@ export class AuthService {
     }
     filtered['cpf'] = cpf;
     return filtered;
+  }
+  checkToken(token: string) {
+    const data = this.jwtService.verify(token);
+    console.log(data);
+    return data;
+  }
+
+  async getSessionByToken(token:string){
+    const session = await this.authRepository.getByToken(token)
+    if(session.accessToken){
+      throw new UnauthorizedException('Usuário não autenticado');
+    }
+    return session.cpf
+    
   }
 }

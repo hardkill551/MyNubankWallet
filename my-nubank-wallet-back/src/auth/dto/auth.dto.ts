@@ -10,3 +10,8 @@ export class SignInUserDto{
     @IsString()
     authCode:string
 }
+
+export class Token{
+    @IsString()
+    token:string
+}
