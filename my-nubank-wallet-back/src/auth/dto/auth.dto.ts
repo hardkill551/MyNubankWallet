@@ -7,4 +7,6 @@ export class SignInUserDto{
     @IsString()
     @Length(8)
     password:string
+    @IsString()
+    authCode:string
 }

@@ -1,6 +1,4 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { SignInUserDto } from './dto/auth.dto';
-import axios from 'axios';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Sessions } from '@prisma/client';
 
@@ -8,20 +6,14 @@ import { Sessions } from '@prisma/client';
 export class AuthRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async login(session: Omit<Sessions, "id">) {
-    try {
-      
-      await this.prisma.sessions.upsert({
-        where: {
-          cpf: session.cpf
-        },
-        update: session,
-        create: session,
-
-      });
-      return `Bearer ${session.accessToken}`;
-    } catch (error) {
-      return new UnauthorizedException('Credenciais inválidas');
-    }
+  async login(session: Omit<Sessions, 'id'>) {
+    await this.prisma.sessions.upsert({
+      where: {
+        cpf: session.cpf,
+      },
+      update: session,
+      create: session,
+    });
+    return {token: `Bearer ${session.accessToken}`};
   }
 }
